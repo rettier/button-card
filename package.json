@@ -25,9 +25,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/custom-cards/button-card/issues"
+    "url": "https://github.com/rettier/button-card/issues"
   },
-  "homepage": "https://github.com/custom-cards/button-card#readme",
+  "homepage": "https://github.com/rettier/button-card#readme",
   "devDependencies": {
     "@babel/core": "^7.12.3",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
