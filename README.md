@@ -11,6 +11,7 @@
 [![Community Forum][forum-shield]][forum]
 
 Lovelace Button card for your entities.
+**This is a fork, containing changes for my personal preferences**
 
 ![all](examples/all.gif)
 
