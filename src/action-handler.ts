@@ -1,7 +1,6 @@
 import { directive, PropertyPart } from 'lit-html';
 // import '@material/mwc-ripple';
 // tslint:disable-next-line
-import { Ripple } from '@material/mwc-ripple';
 import { myFireEvent } from './my-fire-event';
 import { deepEqual } from './deep-equal';
 
@@ -42,9 +41,7 @@ declare global {
 }
 
 class ActionHandler extends HTMLElement implements ActionHandler {
-  public holdTime = 500;
-
-  public ripple: Ripple;
+  public holdTime = 300;
 
   protected timer?: number;
 
@@ -60,7 +57,6 @@ class ActionHandler extends HTMLElement implements ActionHandler {
 
   constructor() {
     super();
-    this.ripple = document.createElement('mwc-ripple');
   }
 
   public connectedCallback(): void {
@@ -73,16 +69,12 @@ class ActionHandler extends HTMLElement implements ActionHandler {
       zIndex: '999',
     });
 
-    this.appendChild(this.ripple);
-    this.ripple.primary = true;
-
-    ['touchcancel', 'mouseout', 'mouseup', 'touchmove', 'mousewheel', 'wheel', 'scroll'].forEach((ev) => {
+    ['touchcancel', 'mouseout', 'mouseup', 'mousewheel', 'wheel', 'scroll'].forEach((ev) => {
       document.addEventListener(
         ev,
         () => {
           this.cancelled = true;
           if (this.timer) {
-            this.stopAnimation();
             clearTimeout(this.timer);
             this.timer = undefined;
             if (this.isRepeating && this.repeatTimeout) {
@@ -146,7 +138,6 @@ class ActionHandler extends HTMLElement implements ActionHandler {
       if (options.hasHold) {
         this.held = false;
         this.timer = window.setTimeout(() => {
-          this.startAnimation(x, y);
           this.held = true;
           if (options.repeat && !this.isRepeating) {
             this.isRepeating = true;
@@ -178,7 +169,6 @@ class ActionHandler extends HTMLElement implements ActionHandler {
           clearInterval(this.repeatTimeout);
         }
         this.isRepeating = false;
-        this.stopAnimation();
         this.timer = undefined;
       }
       if (options.hasHold && this.held) {
@@ -220,23 +210,6 @@ class ActionHandler extends HTMLElement implements ActionHandler {
     element.addEventListener('click', element.actionHandler.end);
 
     element.addEventListener('keyup', element.actionHandler.handleEnter);
-  }
-
-  private startAnimation(x: number, y: number): void {
-    Object.assign(this.style, {
-      left: `${x}px`,
-      top: `${y}px`,
-      display: null,
-    });
-    this.ripple.disabled = false;
-    this.ripple.startPress();
-    this.ripple.unbounded = true;
-  }
-
-  private stopAnimation(): void {
-    this.ripple.endPress();
-    this.ripple.disabled = true;
-    this.style.display = 'none';
   }
 }
 
