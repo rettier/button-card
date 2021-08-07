@@ -55,6 +55,9 @@ class ActionHandler extends HTMLElement implements ActionHandler {
 
   private isRepeating = false;
 
+  private startX;
+  private startY;
+
   constructor() {
     super();
   }
@@ -68,6 +71,38 @@ class ActionHandler extends HTMLElement implements ActionHandler {
       pointerEvents: 'none',
       zIndex: '999',
     });
+
+    document.addEventListener(
+        "touchmove",
+        (ev: Event) => {
+          let x;
+          let y;
+          if ((ev as TouchEvent).touches) {
+            x = (ev as TouchEvent).touches[0].pageX;
+            y = (ev as TouchEvent).touches[0].pageY;
+          } else {
+            x = (ev as MouseEvent).pageX;
+            y = (ev as MouseEvent).pageY;
+          }
+
+          let dX = this.startX - x, dY = this.startY - y;
+          let dist = Math.sqrt(dX * dX + dY * dY);
+          if( dist < 30 ){
+            return;
+          }
+
+          this.cancelled = true;
+          if (this.timer) {
+            clearTimeout(this.timer);
+            this.timer = undefined;
+            if (this.isRepeating && this.repeatTimeout) {
+              clearInterval(this.repeatTimeout);
+              this.isRepeating = false;
+            }
+          }
+        },
+        { passive: true },
+    );
 
     ['touchcancel', 'mouseout', 'mouseup', 'mousewheel', 'wheel', 'scroll'].forEach((ev) => {
       document.addEventListener(
@@ -134,6 +169,8 @@ class ActionHandler extends HTMLElement implements ActionHandler {
         x = (ev as MouseEvent).pageX;
         y = (ev as MouseEvent).pageY;
       }
+      this.startX = x;
+      this.startY = y;
 
       if (options.hasHold) {
         this.held = false;
